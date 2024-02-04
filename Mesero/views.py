@@ -11,10 +11,13 @@ from Mesero.models import *
 
 @method_decorator(csrf_exempt, name='dispatch')
 class TomarPedido(View):
-    def post(self, request, id_mesero, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         try:
-            # Obtener datos del pedido desde el request
-            mesero_instance = get_object_or_404(Meseros, id_mesero=id_mesero)
+            # Obtener datos del pedido desde el requestid_administrador = request.POST.get('id_administrador', 1)
+
+            # mesero_instance = get_object_or_404(Meseros, id_mesero=id_mesero)
+            id_mesero = request.POST.get('id_mesero', 1)
+
             id_mesa = request.POST.get('id_mesa')
             id_cliente_id = request.POST.get('id_cliente')  # Obtener solo el ID del cliente
             fecha_pedido = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -65,7 +68,7 @@ class TomarPedido(View):
                 id_producto_instance = get_object_or_404(Producto, id_producto=id_producto_id)
                 
                 # Calcular el precio total por cada detalle, teniendo en cuenta el impuesto
-                precio_total_detalle = (precio_unitario + impuesto)
+                precio_total_detalle = (precio_unitario * cantidad) + impuesto
                 
                 # Restar el descuento al precio total del detalle si hay descuento
                 precio_total_detalle -= descuento
@@ -84,6 +87,7 @@ class TomarPedido(View):
                 )
 
             # Asignar el precio total del pedido al campo 'precio' en el modelo 'Pedidos'
+            print("Total Precio Pedido:", total_precio_pedido)
             nuevo_pedido.precio = total_precio_pedido
             nuevo_pedido.save()
 
