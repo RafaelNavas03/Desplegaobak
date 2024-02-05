@@ -630,6 +630,7 @@ class FabricarComponente(View):
             id_bodega = request.POST.get('id_bodega')
             bodega= Bodegas.objects.get(id_bodega=id_bodega)
             componente= Componente.objects.get(id_componente=id_componente_generado)
+            ensamble = EnsambleComponente.objects.get(id_componentepadre=componente)
             # Restar la cantidad de cada componente en el inventario
             for compo in lista_componentes:
                 print('Recorrer lista?')
@@ -637,9 +638,12 @@ class FabricarComponente(View):
                 id_componente = detalle_componente.get('key')
                 componentedet=Componente.objects.get(id_componente=id_componente)
                 cantidad_restar = Decimal(detalle_componente.get('quantity'))
-
+                print('cantrestar:')
+                print(cantidad_restar)
+                catngenensamble=Decimal(ensamble.padrecantidad)
+                cantnecesaria = (cantidad_restar * cantidad_fabricar) / catngenensamble
                 inventario_componente = Inventario.objects.get(id_componente=componentedet, id_bodega=bodega)
-                inventario_componente.cantidad_disponible -= cantidad_restar
+                inventario_componente.cantidad_disponible -= cantnecesaria
                 inventario_componente.save()
             inventario_generado = Inventario.objects.filter(id_componente=componente, id_bodega=bodega)
             if(inventario_generado.count()>0):
@@ -671,6 +675,8 @@ class FabricarProducto(View):
             id_bodega = request.POST.get('id_bodega')
             bodega= Bodegas.objects.get(id_bodega=id_bodega)
             producto= Producto.objects.get(id_producto=id_producto_generado)
+            ensamble = EnsambleProducto.objects.get(id_producto=producto)
+            catngenensamble=Decimal(ensamble.padrecantidad)
             # Restar la cantidad de cada componente en el inventario
             for compo in lista_componentes:
                 print('Recorrer lista?')
@@ -678,9 +684,9 @@ class FabricarProducto(View):
                 id_componente = detalle_componente.get('key')
                 componentedet=Componente.objects.get(id_componente=id_componente)
                 cantidad_restar = Decimal(detalle_componente.get('quantity'))
-
+                cantnecesaria = (cantidad_restar * cantidad_fabricar) / catngenensamble
                 inventario_componente = Inventario.objects.get(id_componente=componentedet, id_bodega=bodega)
-                inventario_componente.cantidad_disponible -= cantidad_restar
+                inventario_componente.cantidad_disponible -= cantnecesaria
                 inventario_componente.save()
             inventario_generado = Inventario.objects.filter(id_producto=producto, id_bodega=bodega)
             if(inventario_generado.count()>0):
