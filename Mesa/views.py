@@ -21,7 +21,7 @@ class CrearMesa(View):
             activa = request.POST.get('activa')
             max_personas = request.POST.get('max_personas')
 
-            administrador = Administrador.objects.get(id_administrador=id_administrador)
+            administrador = Administrador.objects.first()
 
             mesa = Mesas(
                 id_administrador=administrador,
