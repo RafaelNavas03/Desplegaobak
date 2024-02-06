@@ -2,7 +2,6 @@ from django.db import models
 from Ubicaciones.models import Ubicaciones
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
- 
 class Cuenta(models.Model):
     id_cuenta = models.AutoField(primary_key=True)
     nombreusuario = models.CharField(max_length=300)
